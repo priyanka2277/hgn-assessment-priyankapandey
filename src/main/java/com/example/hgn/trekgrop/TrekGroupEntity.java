@@ -26,8 +26,6 @@ public class TrekGroupEntity {
     @Column(name ="TREK_GROUP_TYPE")
     private TrekGroupType trekGroupType;
 
-    @Column(name ="NUMBER_OF_PEOPLE_IN_TREK")
-    private Integer numberOfPeopleInTrek;
 
     @OneToOne
     @JoinColumn(name ="ORDER_GUID")
