@@ -1,6 +1,7 @@
 package com.example.hgn.order;
 
 import com.example.hgn.Alert.AlertEntity;
+import com.example.hgn.device.DeviceEntity;
 import com.example.hgn.device.deviceAssignment.DeviceAssignmentEntity;
 import com.example.hgn.order.constant.OrderStatus;
 import com.example.hgn.trekgrop.TrekGroupEntity;
@@ -18,12 +19,15 @@ public class OrderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "ORDER_GUID", unique=true, nullable=false)
+    @Column(name = "ORDER_GUID", unique = true, nullable = false)
     private String id;
 
 
-    @Column(name ="BOOKING_NUMBER")
+    @Column(name = "BOOKING_NUMBER")
     private String bookingNumber;
+
+    @Column(name = "BOOKING_NAME")
+    private String bookingName;
 
     @Column(name = "START_DATE")
     private LocalDate startDate;
@@ -32,16 +36,20 @@ public class OrderEntity {
     private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name ="STATUS", nullable = false)
+    @Column(name = "STATUS", nullable = false)
     private OrderStatus status;
 
-    @OneToMany(mappedBy = "order" ,cascade = {CascadeType.PERSIST,CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<DeviceAssignmentEntity> assignments;
 
     @OneToOne(mappedBy = "order", fetch = FetchType.LAZY)
     private TrekGroupEntity group;
 
-    @OneToMany(mappedBy = "order", cascade ={CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<AlertEntity> alerts;
+
+    @ManyToOne
+    @JoinColumn(name = "DEVICE_GUID", referencedColumnName = "DEVICE_GUID", nullable = false)
+    private DeviceEntity device;
 
 }
