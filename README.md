@@ -23,6 +23,51 @@ Prevent duplicate SOS alerts within a configurable time window.
 
 Escalate alerts automatically if they are not acknowledged within the configured threshold.
 
+Features
+
+Device Management
+
+Create Device
+
+Update Device
+
+Fetch Devices
+
+Order Management
+
+Create Order
+
+Update Order
+
+Trek Group Management
+
+Create Trek Group
+
+Update Trek Group
+
+
+Fetch Trek Group(s)
+
+Trekker Management
+
+Create Trekker
+
+Update Trekker
+
+Fetch Trekker(s)
+
+Coordinator Management
+
+Create Coordinator
+
+Update Coordinator
+
+Fetch Coordinator(s)
+
+claim management
+
+claim alert
+
 Example API Request
 
 Create Device
