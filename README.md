@@ -27,6 +27,8 @@ Example Request
 "deviceName":"Garmin trekking device"
 }
 
+
+
 Create Order
 /api/v1/order/create
 Exampe Request
@@ -37,6 +39,8 @@ Exampe Request
 "deviceId":"device-01"
 }
 
+
+
 Create Treak Group
 /api/v1/trekgroup/create
 {
@@ -44,6 +48,8 @@ Create Treak Group
 "trekGroupType": "SOLO",
 "bookingNumber": "HGN-20260712-2470"
 }
+
+
 
 Create Trekker
 POST
@@ -55,6 +61,8 @@ ExampleRequest
 "phoneNumber": "9681896502",
 "trekGroupId": "a5f3ad28-464c-4bf4-9bfe-3475a8c2aec5"
 }
+
+
 Create Coordinator
 POST
 /api/v1/coordinator/create
@@ -64,6 +72,8 @@ POST
 "email": "kalpana@gmail.com",
 "phoneNumber": "9848798734"
 }
+
+
 Send sos alert
 /api/v1/alert/save
 {
