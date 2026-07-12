@@ -4,10 +4,7 @@ import com.example.hgn.Alert.dto.AlertCreateRequest;
 import com.example.hgn.common.ServerResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/alert")
@@ -24,6 +21,18 @@ public class AlertController {
     @PostMapping(value = "/save")
     public ResponseEntity<ServerResponse> saveAlert(@RequestBody AlertCreateRequest alertCreateRequest) {
         ServerResponse response = alertService.saveAlert(alertCreateRequest);
+        return new ResponseEntity<>(response, response.getHttpStatus());
+    }
+
+    @Operation(summary = "claim the alert",
+            description = "claim the alert",
+            tags = {"claim", "post"})
+    @PostMapping("/claim/{alertId}/{coordinatorId}")
+    public ResponseEntity<ServerResponse> claimAlert(
+            @PathVariable String alertId,
+            @PathVariable String coordinatorId
+    ) {
+        ServerResponse response = alertService.claimAlert(alertId, coordinatorId);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }

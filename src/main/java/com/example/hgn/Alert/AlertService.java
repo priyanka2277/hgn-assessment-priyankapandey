@@ -3,6 +3,8 @@ package com.example.hgn.Alert;
 import com.example.hgn.Alert.constant.ALERTSTATUS;
 import com.example.hgn.Alert.dto.AlertCreateRequest;
 import com.example.hgn.common.ServerResponse;
+import com.example.hgn.coordinator.CoordinatorEntity;
+import com.example.hgn.coordinator.CoordinatorRepository;
 import com.example.hgn.device.DeviceEntity;
 import com.example.hgn.device.DeviceRepository;
 import com.example.hgn.exception.BadRequestException;
@@ -13,6 +15,7 @@ import com.example.hgn.trekgrop.TrekGroupEntity;
 import com.example.hgn.trekgrop.TrekGroupRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -26,35 +29,38 @@ public class AlertService {
     private final DeviceRepository deviceRepository;
     private final OrderRepository orderRepository;
     private final TrekGroupRepository trekGroupRepository;
+    private final CoordinatorRepository coordinatorRepository;
 
-    public AlertService(AlertRepository alertRepository, DeviceRepository deviceRepository, OrderRepository orderRepository, TrekGroupRepository trekGroupRepository){
+    public AlertService(AlertRepository alertRepository, DeviceRepository deviceRepository, OrderRepository orderRepository, TrekGroupRepository trekGroupRepository, CoordinatorRepository coordinatorRepository) {
         this.alertRepository = alertRepository;
         this.deviceRepository = deviceRepository;
         this.orderRepository = orderRepository;
         this.trekGroupRepository = trekGroupRepository;
+        this.coordinatorRepository = coordinatorRepository;
     }
 
-    public ServerResponse saveAlert(AlertCreateRequest request){
-        DeviceEntity device = deviceRepository.findByDeviceId(request.getDeviceId()).orElseThrow(()->new NotFoundException("Device does not found in hsn"));
-        OrderEntity order = orderRepository.findActiveOrder(request.getDeviceId(), request.getDeviceTimeStamp().toLocalDate()).orElseThrow(()-> new NotFoundException("No active booking found for this device"));
-        TrekGroupEntity group = trekGroupRepository.findByOrderId(order.getId()).orElseThrow(()-> new NotFoundException("No group is associated with the above booking"));
+    public ServerResponse saveAlert(AlertCreateRequest request) {
+        DeviceEntity device = deviceRepository.findByDeviceId(request.getDeviceId()).orElseThrow(() -> new NotFoundException("Device does not found in hsn"));
+        OrderEntity order = orderRepository.findActiveOrder(request.getDeviceId(), request.getDeviceTimeStamp().toLocalDate()).orElseThrow(() -> new NotFoundException("No active booking found for this device"));
+        TrekGroupEntity group = trekGroupRepository.findByOrderId(order.getId()).orElseThrow(() -> new NotFoundException("No group is associated with the above booking"));
         Optional<AlertEntity> latestAlert = alertRepository.findFirstByDevice_DeviceIdOrderByDeviceTimestampDesc(request.getDeviceId());
-        if(latestAlert.isPresent()){
+        if (latestAlert.isPresent()) {
             AlertEntity alert = latestAlert.get();
             Duration difference = Duration.between(
                     alert.getDeviceTimestamp(),
                     request.getDeviceTimeStamp()
             );
-            if(difference.abs().toMinutes() <=5){
+            if (difference.abs().toMinutes() <= 5) {
                 throw new BadRequestException("Duplicate SOS received");
             }
         }
-        AlertEntity alert = createAlertEntity(request,device,order,group);
+        AlertEntity alert = createAlertEntity(request, device, order, group);
         alertRepository.save(alert);
         return ServerResponse.successResponse("Alert saved sucessfully", HttpStatus.CREATED);
 
     }
-    private AlertEntity createAlertEntity(AlertCreateRequest request, DeviceEntity device, OrderEntity order, TrekGroupEntity group){
+
+    private AlertEntity createAlertEntity(AlertCreateRequest request, DeviceEntity device, OrderEntity order, TrekGroupEntity group) {
         AlertEntity alert = new AlertEntity();
         alert.setDevice(device);
         alert.setOrder(order);
@@ -66,5 +72,19 @@ public class AlertService {
         alert.setReceivedAt(LocalDateTime.now());
         alert.setAlertStatus(ALERTSTATUS.NEW);
         return alert;
+    }
+
+    @Transactional
+    public ServerResponse claimAlert(String alertId, String coordinatorId) {
+        CoordinatorEntity coordinator = coordinatorRepository.findById(coordinatorId).orElseThrow(() -> new NotFoundException("Coordinator with given id doesnot exist"));
+        AlertEntity alert = alertRepository.findByIdForUpdate(alertId).orElseThrow(() -> new NotFoundException("Alert not found"));
+        if (alert.getClaimedBy() != null) {
+            throw new BadRequestException("Alert has already been claimed");
+        }
+        alert.setClaimedBy(coordinator);
+        alert.setAlertStatus(ALERTSTATUS.CLAIMED);
+        alertRepository.save(alert);
+        return ServerResponse.successResponse("Alert claimed successfully", HttpStatus.CREATED);
+
     }
 }
