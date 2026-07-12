@@ -44,6 +44,7 @@ A single SOS event
 References Device,Order,and TrekGroup
 
 3.Device Ambiguity
+
 A device is not permanently assigned to one booking.Instead a device has only one booking within the start and end date of the booking.In that period other cannot book that device.
 
 When an SOS alert arrives, the system determines the correct booking by searching for an order whose:
@@ -53,6 +54,7 @@ Device id match the incomig device
 Device timestamp falls between the order start date and end date.
 
 4.Deduplication
+
 Satellite communication can cause the same SOS message to be retransmitted multiple times.
 
 To prevent duplicate alerts, the system retrives the most recent alert from the same device
@@ -63,6 +65,7 @@ within five minutes there is less change of second sos alert.
 The threshold can easily be configured in the future if business requirement change.
 
 5.Concurrency
+
 The system must ensure that two coordinators cannnot claim the same alert simultaneously.
 
 To achieve this, claim operation is execute inside a database transaction using a pessimistic locking
