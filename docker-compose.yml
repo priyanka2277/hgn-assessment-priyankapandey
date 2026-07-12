@@ -1,0 +1,84 @@
+#services:
+#  mysql:
+#    image: mysql:8.4
+#    container_name: hgn-mysql
+#    restart: always
+#
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root123
+#      MYSQL_DATABASE: HGN
+#
+#    ports:
+#      - "3307:3306"
+#
+#    volumes:
+#      - mysql-data:/var/lib/mysql
+#
+#    healthcheck:
+#      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -proot123 --silent"]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 10
+#      start_period: 30s
+#
+#  app:
+#    build: .
+#    container_name: hgn-app
+#    restart: on-failure
+#
+#    depends_on:
+#      mysql:
+#        condition: service_healthy
+#
+#    ports:
+#      - "8080:8080"
+#
+#    environment:
+#        SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/HGN
+#        SPRING_DATASOURCE_USERNAME: root
+#        SPRING_DATASOURCE_PASSWORD: root123
+#
+#volumes:
+#  mysql-data:
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: hgn-mysql
+    restart: always
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: HGN
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -proot123 --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  app:
+    build: .
+    container_name: hgn-app
+    restart: on-failure
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+
+volumes:
+  mysql-data:
