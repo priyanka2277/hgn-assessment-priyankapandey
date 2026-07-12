@@ -19,22 +19,22 @@ public class TrekGroupEntity {
     @Column(name = "TREKGROUP_GUID")
     private String id;
 
-    @Column(name ="GROUP_NAME")
+    @Column(name = "GROUP_NAME")
     private String groupName;
 
     @Enumerated(EnumType.STRING)
-    @Column(name ="TREK_GROUP_TYPE")
+    @Column(name = "TREK_GROUP_TYPE")
     private TrekGroupType trekGroupType;
 
 
     @OneToOne
-    @JoinColumn(name ="ORDER_GUID")
+    @JoinColumn(name = "ORDER_GUID")
     private OrderEntity order;
 
-    @OneToMany(mappedBy = "group", cascade ={CascadeType.PERSIST,CascadeType.MERGE})
+    @OneToMany(mappedBy = "group", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<TrekkerEntity> trekkerList;
 
-    @OneToMany(mappedBy = "group", cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @OneToMany(mappedBy = "group", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<AlertEntity> alerts;
 
 }

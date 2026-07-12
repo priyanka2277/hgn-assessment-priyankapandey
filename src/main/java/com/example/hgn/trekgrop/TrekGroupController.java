@@ -19,49 +19,50 @@ import java.util.Map;
 public class TrekGroupController {
     private final TrekGroupService trekGroupService;
 
-    public TrekGroupController(TrekGroupService trekGroupService){
+    public TrekGroupController(TrekGroupService trekGroupService) {
         this.trekGroupService = trekGroupService;
     }
+
     @Operation(summary = "Create treakGroup",
             description = "Create a treakGroup",
-            tags = {"trekgroup","post"}
+            tags = {"trekgroup", "post"}
     )
-    @PostMapping(value="/create")
+    @PostMapping(value = "/create")
     public ResponseEntity<ServerResponse> createTreakGroup(
             @RequestBody @Validated CreateTreakGroupRequest request
-    ){
+    ) {
         ServerResponse response = trekGroupService.createTrekGroup(request);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     @Operation(summary = "UpdatetreakGroup",
-            description ="Update a treak group",
-            tags ={"trekgroup","put"}
+            description = "Update a treak group",
+            tags = {"trekgroup", "put"}
     )
     @PutMapping(value = "/update/{id}")
     public ResponseEntity<ServerResponse> updateTreakGroup(
             @PathVariable String id,
             @RequestBody @Validated UpdateTrekGroupRequest request
-    ){
-        ServerResponse response = trekGroupService.updateTrekGroup(id,request);
-        return new ResponseEntity<>(response,response.getHttpStatus());
+    ) {
+        ServerResponse response = trekGroupService.updateTrekGroup(id, request);
+        return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     @Operation(summary = "Get all trek Group",
-            description ="Get all the trek groups",
-            tags ={"trekgroup","get"}
+            description = "Get all the trek groups",
+            tags = {"trekgroup", "get"}
     )
-    @GetMapping(value ="/fetch/all")
-    public ResponseEntity<ServerResponse>  getAllTrekGroup(
-            @RequestParam Map<String,String> allRequestParams,
-            @RequestParam(name ="pageNumber") @Min(0) @Max(99999999)
+    @GetMapping(value = "/fetch/all")
+    public ResponseEntity<ServerResponse> getAllTrekGroup(
+            @RequestParam Map<String, String> allRequestParams,
+            @RequestParam(name = "pageNumber") @Min(0) @Max(99999999)
             @Positive(message = "Page number cannot be negative") int pageNumber,
-            @RequestParam(name="pageSize") @Min(1) @Max(100)
-            @Positive(message ="Page size cannot be negative")
+            @RequestParam(name = "pageSize") @Min(1) @Max(100)
+            @Positive(message = "Page size cannot be negative")
             int pageSize
-            ){
+    ) {
         ServerResponse response = trekGroupService.fetchAllTrekGroup(allRequestParams, PageRequest.of(pageNumber - 1, pageSize));
-        return new ResponseEntity<>(response,response.getHttpStatus());
+        return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
 

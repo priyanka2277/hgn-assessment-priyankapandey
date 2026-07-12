@@ -12,20 +12,20 @@ public class TrekkerEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name ="TREKKER_GUID")
+    @Column(name = "TREKKER_GUID")
     private String id;
 
-    @Column(name= "FIRST_NAME")
+    @Column(name = "FIRST_NAME")
     private String firstName;
 
-    @Column(name ="LAST_NAME")
+    @Column(name = "LAST_NAME")
     private String lastName;
 
-    @Column(name ="PHONE_NUMBER")
+    @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
 
     @ManyToOne
-    @JoinColumn(name ="TREKGROUP_GUID")
+    @JoinColumn(name = "TREKGROUP_GUID")
     private TrekGroupEntity group;
 
 }

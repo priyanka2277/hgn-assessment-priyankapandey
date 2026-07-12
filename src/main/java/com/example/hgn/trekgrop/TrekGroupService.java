@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Map;
 
@@ -23,21 +24,22 @@ public class TrekGroupService {
     private final TrekGroupRepository trekGroupRepository;
     private final OrderRepository orderRepository;
 
-    public TrekGroupService(TrekGroupRepository trekGroupRepository, OrderRepository orderRepository){
+    public TrekGroupService(TrekGroupRepository trekGroupRepository, OrderRepository orderRepository) {
         this.trekGroupRepository = trekGroupRepository;
         this.orderRepository = orderRepository;
     }
 
-    public ServerResponse createTrekGroup(CreateTreakGroupRequest request){
-        OrderEntity order = orderRepository.findByBookingNumber(request.getBookingNumber()).orElseThrow(()->new NotFoundException("Booking not found"));
-        if(trekGroupRepository.existsByOrderId(order.getId())){
+    public ServerResponse createTrekGroup(CreateTreakGroupRequest request) {
+        OrderEntity order = orderRepository.findByBookingNumber(request.getBookingNumber()).orElseThrow(() -> new NotFoundException("Booking not found"));
+        if (trekGroupRepository.existsByOrderId(order.getId())) {
             throw new BadRequestException("This booking already has a trek group assigned");
         }
-        TrekGroupEntity group = createTrekGroupEntity(order,request);
+        TrekGroupEntity group = createTrekGroupEntity(order, request);
         group = trekGroupRepository.save(group);
         return ServerResponse.successResponse("group created successfully", HttpStatus.CREATED);
     }
-    private TrekGroupEntity createTrekGroupEntity(OrderEntity order, CreateTreakGroupRequest request){
+
+    private TrekGroupEntity createTrekGroupEntity(OrderEntity order, CreateTreakGroupRequest request) {
         TrekGroupEntity group = new TrekGroupEntity();
         group.setGroupName(request.getGroupName());
         group.setTrekGroupType(request.getTrekGroupType());
@@ -45,39 +47,40 @@ public class TrekGroupService {
         return group;
     }
 
-    public ServerResponse updateTrekGroup(String id, UpdateTrekGroupRequest request){
-        TrekGroupEntity group = trekGroupRepository.findById(id).orElseThrow(()->  new NotFoundException("trek group found found"));
-        if(request.getGroupName() != null){
+    public ServerResponse updateTrekGroup(String id, UpdateTrekGroupRequest request) {
+        TrekGroupEntity group = trekGroupRepository.findById(id).orElseThrow(() -> new NotFoundException("trek group found found"));
+        if (request.getGroupName() != null) {
             group.setGroupName(request.getGroupName());
         }
-        if(request.getTrekGroupType() != null){
+        if (request.getTrekGroupType() != null) {
             group.setTrekGroupType(request.getTrekGroupType());
         }
         trekGroupRepository.save(group);
-        return  ServerResponse.successResponse("Trek group updated sucessfully", HttpStatus.OK);
+        return ServerResponse.successResponse("Trek group updated sucessfully", HttpStatus.OK);
     }
 
-    public ServerResponse fetchAllTrekGroup(Map<String,String> filters, Pageable pageable){
+    public ServerResponse fetchAllTrekGroup(Map<String, String> filters, Pageable pageable) {
         String groupName = filters.getOrDefault("groupName", null);
         TrekGroupType trekGroupType = null;
-        if(filters.containsKey("trekGroupType")){
+        if (filters.containsKey("trekGroupType")) {
             trekGroupType = TrekGroupType.valueOf(filters.get("trekGroupType").toUpperCase());
         }
         Page<TrekGroupEntity> trekGroupResponse = trekGroupRepository.findAllGroup(groupName, trekGroupType, pageable);
         List<TrekGroupListResponseDTO> dtoList = trekGroupResponse.stream().map(this::mapToTrekGroupDTO).toList();
-        if(!dtoList.isEmpty()){
-            return ServerResponse.successObjectResponse("Trek group fetched successfully",HttpStatus.OK,dtoList,dtoList.size());
+        if (!dtoList.isEmpty()) {
+            return ServerResponse.successObjectResponse("Trek group fetched successfully", HttpStatus.OK, dtoList, dtoList.size());
         }
-        return ServerResponse.successObjectResponse("Trek group empty",HttpStatus.OK,List.of(),0);
+        return ServerResponse.successObjectResponse("Trek group empty", HttpStatus.OK, List.of(), 0);
 
     }
-    private TrekGroupListResponseDTO mapToTrekGroupDTO(TrekGroupEntity trekGroupEntity){
+
+    private TrekGroupListResponseDTO mapToTrekGroupDTO(TrekGroupEntity trekGroupEntity) {
         String bookingNumber = trekGroupEntity.getOrder().getBookingNumber();
         return new TrekGroupListResponseDTO(
                 trekGroupEntity.getId(),
-              trekGroupEntity.getGroupName(),
-              trekGroupEntity.getTrekGroupType(),
-              bookingNumber
+                trekGroupEntity.getGroupName(),
+                trekGroupEntity.getTrekGroupType(),
+                bookingNumber
         );
     }
 }

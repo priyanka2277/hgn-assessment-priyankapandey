@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,4 +40,11 @@ public interface OrderRepository extends JpaRepository<OrderEntity, String> {
             @Param("endDate") LocalDate endDate,
             @Param("excludeOrderId") String excludeOrderId
     );
+
+    @Query("""
+                       select o from OrderEntity  o 
+                       WHERE o.device.deviceId = :deviceId
+                       AND :deviceTimeStamp BETWEEN o.startDate AND o.endDate
+            """)
+    Optional<OrderEntity> findActiveOrder(String deviceId, LocalDate deviceTimeStamp);
 }

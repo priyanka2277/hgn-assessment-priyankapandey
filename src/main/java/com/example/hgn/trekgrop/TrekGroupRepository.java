@@ -9,9 +9,13 @@ import org.springframework.stereotype.Repository;
 
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
+
 @Repository
 public interface TrekGroupRepository extends JpaRepository<TrekGroupEntity, String> {
     boolean existsByOrderId(String orderId);
+
+    Optional<TrekGroupEntity> findByOrderId(String orderId);
 
     @Query("""
                   select tg from TrekGroupEntity tg
@@ -23,5 +27,5 @@ public interface TrekGroupRepository extends JpaRepository<TrekGroupEntity, Stri
             @Param("groupName") String groupName,
             @Param("trekGroupType") TrekGroupType trekGroupType,
             Pageable pageable
-            );
+    );
 }

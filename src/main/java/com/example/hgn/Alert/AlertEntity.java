@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,34 +18,34 @@ import java.time.LocalDateTime;
 public class AlertEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name ="ALERT_GUID")
+    @Column(name = "ALERT_GUID")
     private String id;
 
-    @Column(name = "LATITUDE", nullable=false)
+    @Column(name = "LATITUDE", nullable = false)
     private Double latitude;
 
     @Column(name = "LONGITUDE", nullable = false)
     private Double longitude;
 
-    @Column(name ="LOCAL_DATE_TIME", nullable = false)
-    private LocalDateTime deviceTimeStamp;
+    @Column(name = "LOCAL_DATE_TIME", nullable = false)
+    private LocalDateTime deviceTimestamp;
 
     @Enumerated(EnumType.STRING)
-    @Column(name ="ALERT_STATUS")
+    @Column(name = "ALERT_STATUS")
     private ALERTSTATUS alertStatus;
 
-    @Column(name ="ESCALATED")
+    @Column(name = "ESCALATED")
     private boolean escalated;
 
-    @Column(name ="RECEIVED_AT")
+    @Column(name = "RECEIVED_AT")
     private LocalDateTime receivedAt;
 
     @ManyToOne
-    @JoinColumn(name ="DEVICE_GUID", referencedColumnName = "DEVICE_GUID")
+    @JoinColumn(name = "DEVICE_GUID", referencedColumnName = "DEVICE_GUID")
     private DeviceEntity device;
 
     @ManyToOne
-    @JoinColumn(name ="ORDER_GUID", referencedColumnName = "ORDER_GUID")
+    @JoinColumn(name = "ORDER_GUID", referencedColumnName = "ORDER_GUID")
     private OrderEntity order;
 
     @ManyToOne
@@ -52,11 +53,8 @@ public class AlertEntity {
     private TrekGroupEntity group;
 
     @ManyToOne
-    @JoinColumn(name="COORDINATOR_GUID", referencedColumnName = "COORDINATOR_GUID")
+    @JoinColumn(name = "COORDINATOR_GUID", referencedColumnName = "COORDINATOR_GUID")
     private CoordinatorEntity claimedBy;
-
-
-
 
 
 }
